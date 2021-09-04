@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
@@ -17,6 +16,7 @@ import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.example.floatinglyricforthirdpartymusicapp.db.AppDatabase
 import com.example.floatinglyricforthirdpartymusicapp.db.Lyric
 import java.io.File
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun clearDataBase() {
         Thread {
             db.getLyricDAO().deleteAll()
-        }
+        }.start()
     }
 
 
