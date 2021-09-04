@@ -2,14 +2,12 @@ package com.example.floatinglyricforthirdpartymusicapp
 
 import android.annotation.SuppressLint
 import android.app.Notification
-import android.content.Intent
 import android.graphics.PixelFormat
 import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSession
 import android.os.Build
 import android.os.Handler
-import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -202,6 +200,7 @@ class FloatingLyricService : NotificationListenerService() {
                 for (lyric in allLyric) {
                     if (lyric.lyric_file_name.removeSuffix(".lrc") == currentSingerAndTitle) {
                         val lyricFile = File(lyric.lyric_path)
+                        Log.i(TAG, "onNotificationPosted: lyric.lyric_path: ${lyric.lyric_path}")
                         targetPath = lyricFile.toPath()
                         break
                     }
@@ -229,19 +228,26 @@ class FloatingLyricService : NotificationListenerService() {
      */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun lyricFileToString(path: Path): String {
-        val file = File(path.toUri())
-        val ins = FileInputStream(file)
-        val inr = InputStreamReader(ins)
-        val reader = BufferedReader(inr)
+        try {
+            Log.i(TAG, "lyricFileToString: path: ${path.toUri()}")
+            val file = File(path.toUri())
+            Log.i(TAG, "lyricFileToString: file.exist: ${file.exists()}")
+            val ins = FileInputStream(file)
+            val inr = InputStreamReader(ins)
+            val reader = BufferedReader(inr)
 
-        var line = reader.readLine()
-        val stringBuilder = StringBuilder()
+            var line = reader.readLine()
+            val stringBuilder = StringBuilder()
 
-        do {
-            stringBuilder.append(line + "\n")
-            line = reader.readLine()
-        } while (line != null)
-        return stringBuilder.toString()
+            do {
+                stringBuilder.append(line + "\n")
+                line = reader.readLine()
+            } while (line != null)
+            return stringBuilder.toString()
+        } catch (e: Exception) {
+            Log.e(TAG, "lyricFileToString: ${e.printStackTrace()}")
+        }
+        return null.toString()
     }
 
     /**
